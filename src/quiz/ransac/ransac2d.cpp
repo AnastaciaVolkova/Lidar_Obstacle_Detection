@@ -66,19 +66,75 @@ std::unordered_set<int> Ransac(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, int ma
 	std::unordered_set<int> inliersResult;
 	srand(time(NULL));
 	
-	// TODO: Fill in this function
+  std::unique_ptr<std::unordered_set<int>> p_inliers =std::make_unique<std::unordered_set<int>>();
+	// For max iterations
+  for (int i = 0; i < maxIterations; i++){
+	  // Randomly sample subset and fit line
+    int i1 = (double)rand()/RAND_MAX*cloud->points.size();
+    int i2 =  (double)rand()/RAND_MAX*cloud->points.size();
+    pcl::PointXYZ p1 = cloud->points[i1];
+    pcl::PointXYZ p2 = cloud->points[i2];
+    double a = p1.y - p2.y;
+    double b = p2.x - p1.x;
+    double c = p1.x*p2.y - p1.y*p2.x;
+    std::unique_ptr<std::unordered_set<int>> cur_inliers = std::make_unique<std::unordered_set<int>>();
+	  // Measure distance between every point and fitted line
+    for (int ip = 0; ip < cloud->points.size(); ip++){
+      if ((ip == i1) || (ip == i2))
+        continue;
+      auto p = cloud->points[ip];
+      double dist = abs(a*p.x + b*p.y + c)/sqrt(a*a + b*b);
+      if (dist < distanceTol)
+        cur_inliers->insert(ip);
+    }
+    if (cur_inliers->size() > p_inliers->size()){
+      p_inliers = std::move(cur_inliers);
+    }
+  }
 
-	// For max iterations 
+	inliersResult = *p_inliers;
+  return inliersResult;
+}
 
-	// Randomly sample subset and fit line
-
-	// Measure distance between every point and fitted line
-	// If distance is smaller than threshold count it as inlier
-
-	// Return indicies of inliers from fitted line with most inliers
+std::unordered_set<int> RansacPlane(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, int maxIterations, float distanceTol)
+{
+	std::unordered_set<int> inliersResult;
+	srand(time(NULL));
 	
-	return inliersResult;
+  std::unique_ptr<std::unordered_set<int>> p_inliers =std::make_unique<std::unordered_set<int>>();
+	// For max iterations
+  for (int i = 0; i < maxIterations; i++){
+	  // Randomly sample subset and fit line
+    int i1 = (double)rand()/RAND_MAX*cloud->points.size();
+    int i2 =  (double)rand()/RAND_MAX*cloud->points.size();
+    int i3 =  (double)rand()/RAND_MAX*cloud->points.size();
 
+    pcl::PointXYZ p1 = cloud->points[i1];
+    pcl::PointXYZ p2 = cloud->points[i2];
+    pcl::PointXYZ p3 = cloud->points[i3];
+
+    double a = (p2.y-p1.y)*(p3.z-p1.z)-(p2.z-p1.z)*(p3.y-p1.y); 
+    double b = (p2.z-p1.z)*(p3.x-p1.x)-(p2.x-p1.x)*(p3.z-p1.z); 
+    double c = (p2.x-p1.x)*(p3.y-p1.y)-(p2.y-p1.y)*(p3.x-p1.x); 
+    double d = -(a*p1.x+b*p1.y+c*p1.z);
+ 
+    std::unique_ptr<std::unordered_set<int>> cur_inliers = std::make_unique<std::unordered_set<int>>();
+	  // Measure distance between every point and fitted line
+    for (int ip = 0; ip < cloud->points.size(); ip++){
+      if ((ip == i1) || (ip == i2))
+        continue;
+      auto p = cloud->points[ip];
+      double dist = abs(a*p.x + b*p.y + c*p.z+d)/sqrt(a*a + b*b + c*c);
+      if (dist < distanceTol)
+        cur_inliers->insert(ip);
+    }
+    if (cur_inliers->size() > p_inliers->size()){
+      p_inliers = std::move(cur_inliers);
+    }
+  }
+
+	inliersResult = *p_inliers;
+  return inliersResult;
 }
 
 int main ()
@@ -88,11 +144,11 @@ int main ()
 	pcl::visualization::PCLVisualizer::Ptr viewer = initScene();
 
 	// Create data
-	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud = CreateData();
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud = CreateData3D();
 	
 
-	// TODO: Change the max iteration and distance tolerance arguments for Ransac function
-	std::unordered_set<int> inliers = Ransac(cloud, 0, 0);
+	// Change the max iteration and distance tolerance arguments for Ransac function
+	std::unordered_set<int> inliers = RansacPlane(cloud, 100, 0.6);
 
 	pcl::PointCloud<pcl::PointXYZ>::Ptr  cloudInliers(new pcl::PointCloud<pcl::PointXYZ>());
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloudOutliers(new pcl::PointCloud<pcl::PointXYZ>());
