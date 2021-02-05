@@ -44,17 +44,19 @@ struct KdTree
 		if (node == NULL)
 			return;
 
-		if (abs(node->point[0]-target[0])<distanceTol && abs(node->point[1]-target[1])<distanceTol)
-			ids.push_back(node->id);
+		// Check if current point is inside target box.
+		if (abs(node->point[0]-target[0])<distanceTol && abs(node->point[1]-target[1])<distanceTol) {
+			float distance = sqrt(pow(node->point[0] - target[0], 2) + pow(node->point[1] - target[1], 2));
+			if (distance <= distanceTol)
+				ids.push_back(node->id);
+		}
 		
 		int x_y = depth%2;
-		Node* nodes[] = {node->right, node->left};
-		bool is_left = target[x_y] < node->point[x_y];
 		
-		if (abs(nodes[!is_left]->point[0]-target[0])<distanceTol && abs(nodes[!is_left]->point[1]-target[1])<distanceTol)
-			ids.push_back(nodes[!is_left]->id);
-
-		SearchHelper(nodes[is_left], depth+1, distanceTol, target, ids);
+		if (target[x_y]-distanceTol < node->point[x_y])
+			SearchHelper(node->left, depth+1, distanceTol, target, ids);
+		if (target[x_y]+distanceTol > node->point[x_y])
+			SearchHelper(node->right, depth+1, distanceTol, target, ids);
 	};
 	
 	// return a list of point ids in the tree that are within distance of target
