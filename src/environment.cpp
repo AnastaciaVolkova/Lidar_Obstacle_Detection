@@ -136,11 +136,11 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer)
 
     // Get cloud points from point cloud file.
 	pcl::PointCloud<pcl::PointXYZI>::Ptr cloud = point_processor->loadPcd("./src/sensors/data/pcd/data_1/0000000000.pcd");
-    renderPointCloud(viewer, cloud, "input cloud");
 
+    cloud = point_processor->FilterCloud(cloud, 0.1f, Eigen::Vector4f{-20, -20, -2, 1}, Eigen::Vector4f{20, 20, 10, 1});
+    renderPointCloud(viewer, cloud, "input cloud");
     // Render rays or points.
     // renderRays(viewer, lidar->position, cloud);
-    // renderPointCloud(viewer, cloud, "Cloud");
 
     //std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> seg_res = point_processor->SegmentPlane(cloud, 100, 0.2);
     // renderPointCloud(viewer, seg_res.first,"obstCloud",Color(1,0,0));
