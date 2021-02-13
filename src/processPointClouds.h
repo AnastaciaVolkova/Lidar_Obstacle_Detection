@@ -122,7 +122,7 @@ typename pcl::PointCloud<PointT>::Ptr ProcessPointClouds<PointT>::FilterCloud(ty
 template<typename PointT>
 std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::SeparateClouds(pcl::PointIndices::Ptr inliers, typename pcl::PointCloud<PointT>::Ptr cloud)
 {
-  // TODO: Create two new point clouds, one cloud with obstacles and other with segmented plane
+     //Create two new point clouds, one cloud with obstacles and other with segmented plane
     typename pcl::PointCloud<PointT>::Ptr cloud_obstacle (new pcl::PointCloud<PointT>());
     typename pcl::PointCloud<PointT>::Ptr cloud_plane(new pcl::PointCloud<PointT>());
     for (int index: inliers->indices)
@@ -148,7 +148,7 @@ std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT
     auto startTime = std::chrono::steady_clock::now();
 	pcl::PointIndices::Ptr inliers(new pcl::PointIndices);
 
-    // TODO:: Fill in this function to find inliers for the cloud.
+    // Fill in this function to find inliers for the cloud.
     pcl::SACSegmentation<PointT> seg; //Create nodelet segmentation class for Sample Consensus methods and models.
     pcl::ModelCoefficients::Ptr coefficients(new pcl::ModelCoefficients);
     seg.setOptimizeCoefficients(true); // Coefficient refinement is required.
@@ -190,7 +190,7 @@ std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::C
 
     typename std::vector<typename pcl::PointCloud<PointT>::Ptr> clusters;
 
-    // TODO:: Fill in the function to perform euclidean clustering to group detected obstacles
+    //Fill in the function to perform euclidean clustering to group detected obstacles
     typename pcl::search::KdTree<PointT>::Ptr tree(new typename pcl::search::KdTree<PointT>);
     tree->setInputCloud(cloud);
 
