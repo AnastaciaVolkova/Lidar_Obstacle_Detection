@@ -77,10 +77,27 @@ void simpleHighway(pcl::visualization::PCLVisualizer::Ptr& viewer)
     }
 }
 
-void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer, float filterRes, float clusterTolerance, int minSize, int maxSize, std::string to_stop="all")
+struct PntCldParams{
+    float filterRes=0.1f; // Filter resolution.
+    float clusterTolerance=0.4f; // Cluster tolerance.
+    int minSize = 10; // Minimum size of cluster. 
+    int maxSize = 1000;  // Maximum size of cluster.
+    std::string to_stop="all";  // Stage to print. 
+};
+
+void cityBlock(
+    pcl::visualization::PCLVisualizer::Ptr& viewer, 
+    const PntCldParams& pnt_cld_params
+    )
 {
+    float filterRes= pnt_cld_params.filterRes;
+    float clusterTolerance=pnt_cld_params.clusterTolerance;
+    int minSize =pnt_cld_params.minSize;
+    int maxSize =pnt_cld_params.maxSize;
+    std::string to_stop=pnt_cld_params.to_stop;
+
     // Create point processor.
-    ProcessPointClouds<pcl::PointXYZI>* point_processor = new ProcessPointClouds<pcl::PointXYZI>();
+   ProcessPointClouds<pcl::PointXYZI>* point_processor = new ProcessPointClouds<pcl::PointXYZI>();
 
     // Get cloud points from point cloud file.
 	pcl::PointCloud<pcl::PointXYZI>::Ptr cloud = point_processor->loadPcd("../src/sensors/data/pcd/data_1/0000000000.pcd");
@@ -149,7 +166,19 @@ int main (int argc, char** argv)
     CameraAngle setAngle = XY;
     initCamera(setAngle, viewer);
 
-    cityBlock(viewer, std::stof(argv[1]), std::stof(argv[2]), std::stoi(argv[3]), std::stoi(argv[4]), argv[5]);
+    PntCldParams param;
+    if (argc >= 2)
+        param.filterRes=std::stof(argv[1]); // Filter resolution.
+    if (argc >= 3)
+        param.clusterTolerance=std::stof(argv[2]); // Cluster tolerance.
+    if (argc >= 4)
+        param.minSize = std::stof(argv[3]); // Minimum size of cluster. 
+    if (argc >=5 )
+        param.maxSize = std::stof(argv[4]);  // Maximum size of cluster.
+    if (argc >=6 )
+        param.to_stop=argv[5];  // Stage to print. 
+
+    cityBlock(viewer, param); 
 
     while (!viewer->wasStopped ())
     {
