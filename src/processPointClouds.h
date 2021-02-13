@@ -169,10 +169,15 @@ std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT
 
 template<typename PointT>
 std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>:: SegmentPlaneMy(typename pcl::PointCloud<PointT>::Ptr cloud, int maxIterations, float distanceThreshold){
+    auto startTime = std::chrono::steady_clock::now();
     std::unordered_set<int>  inliers = RansacPlane<PointT>(cloud, maxIterations, distanceThreshold);
     pcl::PointIndices::Ptr inliers_ind(new pcl::PointIndices);
     std::for_each(inliers.begin(), inliers.end(), [&](auto x){inliers_ind->indices.push_back(x);});
     std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr> segResult = SeparateClouds(inliers_ind,cloud);
+    auto endTime = std::chrono::steady_clock::now();
+    auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
+    std::cout << "Custom segmentation took " << elapsedTime.count() << " milliseconds" << std::endl;
+
     return segResult;
 };
 
