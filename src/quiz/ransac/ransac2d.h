@@ -19,9 +19,9 @@ std::unordered_set<int> RansacPlane(typename pcl::PointCloud<PointT>::Ptr cloud,
     int i2 =  (double)rand()/RAND_MAX*cloud->points.size();
     int i3 =  (double)rand()/RAND_MAX*cloud->points.size();
 
-    pcl::PointXYZ p1 = cloud->points[i1];
-    pcl::PointXYZ p2 = cloud->points[i2];
-    pcl::PointXYZ p3 = cloud->points[i3];
+    PointT p1 = cloud->points[i1];
+    PointT p2 = cloud->points[i2];
+    PointT p3 = cloud->points[i3];
 
     double a = (p2.y-p1.y)*(p3.z-p1.z)-(p2.z-p1.z)*(p3.y-p1.y); 
     double b = (p2.z-p1.z)*(p3.x-p1.x)-(p2.x-p1.x)*(p3.z-p1.z); 
