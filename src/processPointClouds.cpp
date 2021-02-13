@@ -100,7 +100,7 @@ std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT
 	pcl::PointIndices::Ptr inliers(new pcl::PointIndices);
 
     // TODO:: Fill in this function to find inliers for the cloud.
-    pcl::SACSegmentation<pcl::PointXYZ> seg; //Create nodelet segmentation class for Sample Consensus methods and models.
+    pcl::SACSegmentation<PointT> seg; //Create nodelet segmentation class for Sample Consensus methods and models.
     pcl::ModelCoefficients::Ptr coefficients(new pcl::ModelCoefficients);
     seg.setOptimizeCoefficients(true); // Coefficient refinement is required.
     seg.setModelType(pcl::SACMODEL_PLANE);
@@ -125,14 +125,14 @@ std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::C
     // Time clustering process
     auto startTime = std::chrono::steady_clock::now();
 
-    std::vector<typename pcl::PointCloud<PointT>::Ptr> clusters;
+    typename std::vector<typename pcl::PointCloud<PointT>::Ptr> clusters;
 
     // TODO:: Fill in the function to perform euclidean clustering to group detected obstacles
-    pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>);
+    typename pcl::search::KdTree<PointT>::Ptr tree(new typename pcl::search::KdTree<PointT>);
     tree->setInputCloud(cloud);
 
     std::vector<pcl::PointIndices> cluster_indices;
-    pcl::EuclideanClusterExtraction<pcl::PointXYZ> ec;
+    pcl::EuclideanClusterExtraction<PointT> ec;
     ec.setClusterTolerance(clusterTolerance);
     ec.setMinClusterSize(minSize);
     ec.setMaxClusterSize(maxSize);
