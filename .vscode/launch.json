@@ -8,7 +8,7 @@
             "program": "${workspaceFolder}/build/environment",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/build",
             "environment": [],
             "console": "externalTerminal",
             "MIMode": "gdb",
