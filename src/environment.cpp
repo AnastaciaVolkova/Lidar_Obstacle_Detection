@@ -1,12 +1,6 @@
-/* \author Aaron Brown */
-// Create simple 3d highway enviroment using PCL
-// for exploring self-driving car sensors
-
 #include "sensors/lidar.h"
 #include "render/render.h"
 #include "processPointClouds.h"
-// using templates for processPointClouds so also include .cpp to help linker
-#include "processPointClouds.cpp"
 #include <string>
 #include <map>
 #include <stdexcept>
@@ -109,7 +103,7 @@ void cityBlock(
         renderPointCloud(viewer, cloud, "filter", Color(0, 1, 1));
         return;
     }
-    std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> seg_res = point_processor->SegmentPlane(cloud, 100, 0.2);
+    std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> seg_res = point_processor->SegmentPlaneMy(cloud, 100, 0.2);
     if (to_stop == "seg"){
         renderPointCloud(viewer, seg_res.second, "plane", Color(0, 1, 0));
         renderPointCloud(viewer, seg_res.first, "seg", Color(0, 1, 1));
