@@ -110,7 +110,7 @@ void cityBlock(
         return;
     }
 
-    std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudClusters = point_processor->Clustering(seg_res.first, clusterTolerance, minSize, maxSize);
+    std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudClusters = point_processor->ClusteringMy(seg_res.first, clusterTolerance, minSize, maxSize);
     int clusterId = 0;
     std::vector<Color> colors = {Color(65/256.0f, 105/256.0f, 225/256.0f), Color(100/256.0f,149/256.0f,237/256.0f),
     Color(238/256.0f,130/256.0f,238/256.0f), Color(0,1,1)};
