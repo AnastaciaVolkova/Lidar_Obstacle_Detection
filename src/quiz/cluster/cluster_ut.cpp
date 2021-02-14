@@ -5,6 +5,7 @@
 #include <string>
 #include "kdtree.h"
 #include "cluster.h"
+#include "../../../src/processPointClouds.h"
 #include <set>
 
 // Arguments:
@@ -25,7 +26,7 @@ pcl::visualization::PCLVisualizer::Ptr initScene(Box window, int zoom)
 pcl::PointCloud<pcl::PointXYZ>::Ptr CreateData(std::vector<std::vector<float>> points)
 {
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>());
-  	
+
   	for(int i = 0; i < points.size(); i++)
   	{
   		pcl::PointXYZ point;
@@ -43,6 +44,11 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr CreateData(std::vector<std::vector<float>> p
 
 }
 
+pcl::PointCloud<pcl::PointXYZ>::Ptr CreateData3D()
+{
+	ProcessPointClouds<pcl::PointXYZ> pointProcessor;
+	return pointProcessor.loadPcd("../../../sensors/data/pcd/simpleHighway.pcd");
+}
 
 void render2DTree(Node* node, pcl::visualization::PCLVisualizer::Ptr& viewer, Box window, int& iteration, uint depth=0)
 {
@@ -74,6 +80,7 @@ void render2DTree(Node* node, pcl::visualization::PCLVisualizer::Ptr& viewer, Bo
 	}
 
 }
+
 int main ()
 {
 
@@ -88,23 +95,29 @@ int main ()
 	pcl::visualization::PCLVisualizer::Ptr viewer = initScene(window, 25);
 
 	// Create data
-	std::vector<std::vector<float>> points = { {-6.2,7}, {-6.3,8.4}, {-5.2,7.1}, {-5.7,6.3}, {7.2,6.1}, {8.0,5.3}, {7.2,7.1}, {0.2,-7.1}, {1.7,-6.9}, {-1.2,-7.2}, {2.2,-8.9} };
+	//std::vector<std::vector<float>> points = { {-6.2,7}, {-6.3,8.4}, {-5.2,7.1}, {-5.7,6.3}, {7.2,6.1}, {8.0,5.3}, {7.2,7.1}, {0.2,-7.1}, {1.7,-6.9}, {-1.2,-7.2}, {2.2,-8.9} };
 	//std::vector<std::vector<float>> points = { {-6.2,7}, {-6.3,8.4}, {-5.2,7.1}, {-5.7,6.3} };
-	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud = CreateData(points);
+	//pcl::PointCloud<pcl::PointXYZ>::Ptr cloud = CreateData(points);
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud = CreateData3D();
+
+	std::vector<std::vector<float>> points;
+	for (auto p: cloud->points){
+		points.push_back({p.x, p.y, p.z});
+	}
 
 	KdTree* tree = new KdTree;
-  
-    for (int i=0; i<points.size(); i++) 
-    	tree->insert(points[i],i); 
+
+    for (int i=0; i<points.size(); i++)
+    	tree->insert(points[i],i);
 
   	int it = 0;
-  	render2DTree(tree->root,viewer,window, it);
-  
-  	std::cout << "Test Search" << std::endl;
-  	std::vector<int> nearby = tree->search({-6,7},3.0);
-  	for(int index : nearby)
-      std::cout << index << ",";
-  	std::cout << std::endl;
+  	//render2DTree(tree->root,viewer,window, it);
+
+  	//std::cout << "Test Search" << std::endl;
+  	//std::vector<int> nearby = tree->search({-6,7},3.0);
+  	//for(int index : nearby)
+    //  std::cout << index << ",";
+  	//std::cout << std::endl;
 
   	// Time segmentation process
   	auto startTime = std::chrono::steady_clock::now();
@@ -117,21 +130,21 @@ int main ()
 
   	// Render clusters
   	int clusterId = 0;
-	std::vector<Color> colors = {Color(1,0,0), Color(0,1,0), Color(0,0,1)};
+	std::vector<Color> colors = {Color(1,0,0), Color(0,1,0), Color(0,0,1), Color(0, 1, 1)};
   	for(std::vector<int> cluster : clusters)
   	{
   		pcl::PointCloud<pcl::PointXYZ>::Ptr clusterCloud(new pcl::PointCloud<pcl::PointXYZ>());
   		for(int indice: cluster)
-  			clusterCloud->points.push_back(pcl::PointXYZ(points[indice][0],points[indice][1],0));
+  			clusterCloud->points.push_back(pcl::PointXYZ(points[indice][0],points[indice][1],points[indice][2]));
   		renderPointCloud(viewer, clusterCloud,"cluster"+std::to_string(clusterId),colors[clusterId%3]);
   		++clusterId;
   	}
   	if(clusters.size()==0)
   		renderPointCloud(viewer,cloud,"data");
-	
+
   	while (!viewer->wasStopped ())
   	{
   	  viewer->spinOnce ();
   	}
-  	
+
 }
