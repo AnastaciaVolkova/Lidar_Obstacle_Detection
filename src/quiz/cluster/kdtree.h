@@ -44,7 +44,11 @@ struct KdTree
 			return;
 
 		// Check if current point is inside target box.
-		if (abs(node->point[0]-target[0])<distanceTol && abs(node->point[1]-target[1])<distanceTol) {
+		bool is_inside_box = true;
+		for (int i = 0; i < target.size(); i++)
+			is_inside_box &= abs(node->point[i] - target[i]) < distanceTol;
+
+		if (is_inside_box){
 			float distance = 0;
 			for (int i = 0; i < target.size(); i++)
 				distance += pow(node->point[i] - target[i], 2);
