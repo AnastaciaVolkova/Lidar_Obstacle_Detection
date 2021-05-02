@@ -1,4 +1,8 @@
-// PCL lib Functions for processing point clouds
+// PCL library Functions for processing point clouds.
+// Skeleton and idea are taken from Udacity sensor fusion nanondegree.
+// https://github.com/udacity/SFND_Lidar_Obstacle_Detection/blob/master/src/processPointClouds.h
+// https://github.com/udacity/SFND_Lidar_Obstacle_Detection/blob/master/src/processPointClouds.cpp
+// Due to course project processPointClouds.h and processPointClouds.cpp files were enhanced, functions were realized.
 
 #ifndef PROCESSPOINTCLOUDS_H_
 #define PROCESSPOINTCLOUDS_H_
