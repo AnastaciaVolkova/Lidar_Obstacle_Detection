@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <stdexcept>
+#include <chrono>
 
 std::vector<Car> initHighway(bool renderScene, pcl::visualization::PCLVisualizer::Ptr& viewer)
 {
@@ -181,6 +182,7 @@ int main (int argc, char** argv)
 
     while (!viewer->wasStopped ())
     {
+        auto t_be = std::chrono::high_resolution_clock::now();
         // Clear viewer
         viewer->removeAllPointClouds();
         viewer->removeAllShapes();
@@ -194,5 +196,8 @@ int main (int argc, char** argv)
             stream_iterator = stream.begin();
 
         viewer->spinOnce ();
+        auto t_en = std::chrono::high_resolution_clock::now();
+        auto dur = std::chrono::duration_cast<std::chrono::milliseconds>(t_en-t_be);
+        std::cout << "Duration: " << dur.count() << "ms" << std::endl;
     }
 }
