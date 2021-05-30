@@ -16,6 +16,10 @@
 #include <pcl/segmentation/sac_segmentation.h>
 #include <pcl/segmentation/extract_clusters.h>
 #include <pcl/common/transforms.h>
+#include <pcl/pcl_config.h>
+#if PCL_VERSION_COMPARE(>, 1, 2, 0)
+#include <boost/filesystem.hpp>
+#endif
 #include <iostream>
 #include <string>
 #include <vector>
